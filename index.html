@@ -155,17 +155,17 @@
       </div>
       <div class="bar">
         <button id="gOn" class="on">顯示握把布</button>
-        <button id="gDir">纏繞方向</button>
+        <button id="gDir">右手纏法</button>
+        <button id="gLab">顯示標註</button>
         <button id="gMore">進階</button>
       </div>
       <div id="moreG" hidden>
         <div class="row"><label>纏繞圈數</label><input type="range" id="gT" min="5" max="45" step="1"><input type="number" id="nGT"></div>
         <div class="row"><label>質感強度</label><input type="range" id="gRel" min="0" max="150" step="1"><input type="number" id="nRel"></div>
-        <div class="row"><label>六角柄面</label><input type="range" id="gHex" min="0" max="100" step="1"><input type="number" id="nHex"></div>
+        <div class="row"><label>八角稜線</label><input type="range" id="gHex" min="0" max="100" step="1"><input type="number" id="nHex"></div>
         <div class="row"><label>上端收窄</label><input type="range" id="gTp" min="50" max="100" step="1"><input type="number" id="nTp"></div>
         <div class="row"><label>收窄長度</label><input type="range" id="gTL" min="3" max="45" step="1"><input type="number" id="nTL"></div>
-        <div class="row"><label>尾端凸起</label><input type="range" id="gFl" min="0" max="60" step="1"><input type="number" id="nFl"></div>
-        <div class="row"><label>底蓋方正</label><input type="range" id="gSq" min="0" max="100" step="1"><input type="number" id="nSq"></div>
+        <div class="row"><label>底蓋凸起</label><input type="range" id="gFl" min="0" max="120" step="1"><input type="number" id="nFl"></div>
         <div class="row"><label>邊緣陰影</label><input type="range" id="gSd" min="0" max="100" step="1"><input type="number" id="nSd"></div>
       </div>
     </div>
@@ -181,8 +181,8 @@
 
   var S={on:true,weave:true,cx:0,cy:0,rx:0,ry:0,rot:0,fade:35,main:'#ff2f6d',cross:'#ff2f6d',split:false,
          mainN:22,crossN:22,w:2.4,depth:70,shadow:30,alpha:100};
-  var G={on:true,x1:0,y1:0,x2:0,y2:0,w:40,turns:12,autoT:false,dir:1,tex:'pu',rel:120,hex:60,flare:60,sd:100,
-         taper:78,tlen:9,capSq:0,color:'#ff5fa2',color2:'#ffffff',stripe:false};
+  var G={labels:false,on:true,x1:0,y1:0,x2:0,y2:0,w:40,turns:12,autoT:false,dir:1,tex:'pu',rel:120,hex:60,flare:38,sd:100,
+         taper:78,tlen:9,color:'#ff5fa2',color2:'#ffffff',stripe:false};
 
   var SC=['#ffffff','#ededed','#111111','#ffe234','#d9ff3d','#ff2f6d','#ff3b30','#ff7a1a','#e8a33d','#0a84ff','#1e3a8a','#00c2a8','#2fbf3b','#8b5cf6'];
   var GC=['#ffffff','#f2f2f2','#1c1c1e','#e0403c','#f0954a','#ff7a1a','#7ee06a','#2fbf3b','#0a84ff','#1e3a8a','#ff5fa2','#8b5cf6'];
@@ -224,11 +224,12 @@
     g('gTex').value=G.tex;
     g('sOn').classList.toggle('on',S.on); g('sOn').textContent=S.on?'顯示拍線':'已隱藏拍線';
     g('sWeave').classList.toggle('on',S.weave);
+    dirLabel(); g('gLab').classList.toggle('on',G.labels);
     g('gOn').classList.toggle('on',G.on); g('gOn').textContent=G.on?'顯示握把布':'已隱藏握把布';
   }
 
   var CS=['fade','main','cross','split','mainN','crossN','w','depth','shadow','alpha','weave','on'];
-  var CG=['color','color2','stripe','tex','rel','hex','flare','sd','taper','tlen','capSq','dir','on','turns','autoT'];
+  var CG=['color','color2','stripe','tex','rel','hex','sd','taper','tlen','flare','dir','labels','on','turns','autoT'];
   function saveCfg(){
     try{ var o={s:{},g:{}};
       CS.forEach(function(x){ o.s[x]=S[x]; }); CG.forEach(function(x){ o.g[x]=G[x]; });
@@ -283,7 +284,6 @@
   link('gHex','nHex',function(){return G.hex;},function(v){G.hex=v;});
   link('gTp','nTp',function(){return G.taper;},function(v){G.taper=v;});
   link('gTL','nTL',function(){return G.tlen;},function(v){G.tlen=v;});
-  link('gSq','nSq',function(){return G.capSq;},function(v){G.capSq=v;});
   link('gFl','nFl',function(){return G.flare;},function(v){G.flare=v;});
   link('gSd','nSd',function(){return G.sd;},function(v){G.sd=v;});
 
@@ -296,7 +296,9 @@
     if(!this.checked){ S.cross=S.main; g('cCross').value=S.main; } render(); };
   g('gStripe').onchange=function(){ G.stripe=this.checked; g('stripeWrap').hidden=!this.checked; render(); };
   g('gTex').onchange=function(){ G.tex=this.value; render(); };
-  g('gDir').onclick=function(){ G.dir=-G.dir; render(); };
+  g('gLab').onclick=function(){ G.labels=!G.labels; this.classList.toggle('on',G.labels); render(); };
+  function dirLabel(){ g('gDir').textContent=(G.dir>0?'右手纏法':'左手纏法'); }
+  g('gDir').onclick=function(){ G.dir=-G.dir; dirLabel(); render(); };
   g('sMore').onclick=function(){ var m=g('moreS'); m.hidden=!m.hidden; this.classList.toggle('on',!m.hidden); };
   g('gMore').onclick=function(){ var m=g('moreG'); m.hidden=!m.hidden; this.classList.toggle('on',!m.hidden); };
   g('sOn').onclick=function(){ S.on=!S.on; this.classList.toggle('on',S.on); this.textContent=S.on?'顯示拍線':'已隱藏拍線'; render(); };
@@ -395,17 +397,17 @@
     if(L<12||G.w<6) return;
     var ang=Math.atan2(dy,dx)-Math.PI/2;
     var b=G.w/2, a=b*(G.taper/100), tz=G.tlen/100;
-    var fl=b*(G.flare/100), fz=0.06+(G.flare/100)*0.12;
-    var cl=b*(0.16+(G.flare/100)*0.55), endW=b+fl;
-    var capN=2+(G.capSq/100)*8;
+    var fl=b*(G.flare/100), fz=0.04+(G.flare/100)*0.2;
+    var cl=b*0.45, endW=b+fl;
+    var capTop=endW, capBot=b*0.78;
     var sdw=Math.max(1.5,b*0.16), sd=G.sd/100;
-    var pad=Math.ceil(sdw+2), maxR=endW+1;
+    var pad=Math.ceil(sdw+2), maxR=Math.max(endW,capTop)+1;
     var GW=Math.ceil(2*(maxR+pad)), GH=Math.ceil(L+cl+pad*2+sdw);
     if(gtmp.width!==GW) gtmp.width=GW;
     if(gtmp.height!==GH) gtmp.height=GH;
     var id=gtx.createImageData(GW,GH), D=id.data;
     var cx=GW/2, top=pad, p=L/Math.max(3,G.turns), TWO=Math.PI*2, LP=-0.5;
-    var rel=G.rel/100, hexm=G.hex/100, FW=Math.PI/3;
+    var rel=G.rel/100, hexm=G.hex/100, FW=Math.PI/4;
     var c1=hx(G.color), c2=hx(G.color2);
     var cell=Math.max(4,b*0.34), texMode=G.tex;
     for(var py=0;py<GH;py++){
@@ -420,7 +422,7 @@
       } else {
         inCap=true; capT=(yy-L)/cl;
         if(capT>1){ beyond=true; r=0; }
-        else r=endW*Math.pow(Math.max(0,1-Math.pow(capT,capN)*0.995),1/capN);
+        else r=capTop+(capBot-capTop)*capT;
       }
       for(var px=0;px<GW;px++){
         var x=px-cx, ax=x<0?-x:x, i4=(py*GW+px)<<2;
@@ -444,7 +446,7 @@
         if(e>0.72) lit*=1-0.13*hexm*((e-0.72)/0.28);
         var spec=Math.pow(nl,9)*0.09*rel, base=c1, f, sp=spec*255;
         if(inCap){
-          var cf=r/endW;
+          var cf=r/capTop;
           f=lit*(0.86+0.14*cf)*(1-0.24*Math.pow(capT,2.4));
           if(capT<0.08) f*=1-0.18*(1-capT/0.08);
           sp*=cf*0.8;
@@ -479,6 +481,32 @@
     ctx.drawImage(gtmp,-cx,-top); ctx.restore();
   }
 
+  function drawLabels(){
+    if(!G.on||!img||exporting) return;
+    var dx=G.x2-G.x1, dy=G.y2-G.y1, L=Math.hypot(dx,dy);
+    if(L<12||G.w<6) return;
+    var ang=Math.atan2(dy,dx)-Math.PI/2, kk=k();
+    var b=G.w/2, endW=b*(1+G.flare/100);
+    var fz=0.04+(G.flare/100)*0.2, cl=b*0.45, fs=Math.max(11,13*kk);
+    ctx.save(); ctx.translate(G.x1,G.y1); ctx.rotate(ang);
+    ctx.font='600 '+fs+'px -apple-system,"Noto Sans TC",sans-serif';
+    ctx.textBaseline='middle'; ctx.lineJoin='round';
+    function band(y0,y1,half,fill,line,label,side){
+      ctx.fillStyle=fill; ctx.fillRect(-half,y0,half*2,y1-y0);
+      ctx.strokeStyle=line; ctx.lineWidth=Math.max(1,1.4*kk);
+      ctx.strokeRect(-half,y0,half*2,y1-y0);
+      var y=(y0+y1)/2, lx=side>0?half:-half, ext=Math.max(20,30*kk)*side;
+      ctx.beginPath(); ctx.moveTo(lx,y); ctx.lineTo(lx+ext,y); ctx.stroke();
+      ctx.textAlign=side>0?'left':'right';
+      ctx.strokeStyle='rgba(255,255,255,0.95)'; ctx.lineWidth=Math.max(2.5,4*kk);
+      ctx.strokeText(label,lx+ext+side*4,y);
+      ctx.fillStyle=line; ctx.fillText(label,lx+ext+side*4,y);
+    }
+    band(L*0.45,L*(1-fz),b,'rgba(61,127,245,0.30)','#3d7ff5','① 握把寬度 '+Math.round(G.w),1);
+    band(L*(1-fz),L+cl,endW,'rgba(224,64,60,0.34)','#e0403c','② 底蓋凸起 '+Math.round(G.flare),-1);
+    ctx.restore();
+  }
+
   function drawGuides(){
     if(exporting||(!hover&&!drag)) return;
     var kk=k();
@@ -503,7 +531,7 @@
     if(!img) return;
     ctx.setTransform(1,0,0,1,0,0); ctx.globalAlpha=1; ctx.globalCompositeOperation='source-over';
     ctx.clearRect(0,0,W,H); ctx.drawImage(img,0,0,W,H);
-    drawStrings(); drawGrip(); drawGuides();
+    drawStrings(); drawGrip(); if(tab==='grip'&&G.labels) drawLabels(); drawGuides();
     snap();
   }
 
@@ -637,8 +665,8 @@
   g('reset').onclick=function(){
     S.fade=35; S.mainN=22; S.crossN=22; S.w=2.4; S.depth=70; S.shadow=30; S.alpha=100;
     S.split=false; S.main=S.cross='#ff2f6d';
-    G.dir=1; G.stripe=false; G.color='#e0403c'; G.color2='#ffffff'; G.tex='pu';
-    G.rel=100; G.hex=50; G.flare=33; G.sd=100; G.taper=78; G.tlen=14; G.capSq=75; G.autoT=true; autoTurns();
+    G.dir=1; G.stripe=false; G.color='#ff5fa2'; G.color2='#ffffff'; G.tex='pu';
+    G.rel=120; G.hex=60; G.flare=38; G.sd=100; G.taper=78; G.tlen=9; G.turns=12; G.autoT=false;
     g('sSplit').checked=false; g('crossWrap').hidden=true;
     g('gStripe').checked=false; g('stripeWrap').hidden=true; g('gTex').value='pu';
     syncUI(); render();
