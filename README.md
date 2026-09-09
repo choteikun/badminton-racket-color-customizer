@@ -3,7 +3,7 @@
 上傳羽球拍照片，模擬更換拍線顏色與握把布配色。
 純前端、單一檔案，照片不會離開使用者的瀏覽器。
 
-線上版：<這裡填你的 Cloudflare Pages 網址>
+線上版：<[這裡填你的 Cloudflare Pages 網址](https://badminton-racket-color-customizer.blackzxz77.workers.dev/)>
 
 ## 檔案
 
